@@ -19,7 +19,7 @@
     "express": "^4.18.2",
     "fluent-ffmpeg": "^2.1.2",
     "uuid": "^9.0.0",
-    "ytdl-core": "^4.11.5"
+    "youtube-dl-exec": "^2.4.8"
   },
   "devDependencies": {
     "@types/cors": "^2.8.14",

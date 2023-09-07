@@ -1,8 +1,8 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import { AppConfig } from "./config/config";
+import { AppConfig } from "./src/interfaces/config/config";
 
-import youtubeDownloaderRoute from "./modules/yt-downloader/youtube-downloader.route";
+import youtubeDownloaderRoute from "./src/modules/yt-downloader/youtube-downloader.route";
 
 const CONFIG = AppConfig();
 
