@@ -30,6 +30,7 @@ export const uploadToSupabase = async (
       cacheControl: "3600",
       upsert: true,
       contentType: "audio/mpeg",
+      duplex: "half",
     });
 
   if (error) {
