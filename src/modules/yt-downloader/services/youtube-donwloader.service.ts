@@ -5,10 +5,7 @@ import { PassThrough } from "stream";
 import { AppConfig } from "../../../interfaces/config/config";
 import { v4 as uuidv4 } from "uuid";
 import { IResponse } from "../../../interfaces/response.interface";
-import {
-  getPublicUrl,
-  uploadToSupabase,
-} from "../../storage/services/storage.service";
+import { uploadToSupabase } from "../../storage/services/storage.service";
 
 const CONFIG = AppConfig();
 
