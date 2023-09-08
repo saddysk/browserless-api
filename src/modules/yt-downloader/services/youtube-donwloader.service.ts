@@ -2,12 +2,9 @@ import { Request } from "express";
 import youtubeDl from "youtube-dl-exec";
 import ffmpeg from "fluent-ffmpeg";
 import { PassThrough } from "stream";
-import { AppConfig } from "../../../interfaces/config/config";
 import { v4 as uuidv4 } from "uuid";
 import { IResponse } from "../../../interfaces/response.interface";
 import { uploadToSupabase } from "../../storage/services/storage.service";
-
-const CONFIG = AppConfig();
 
 const youtubeDownloaderService = async (req: Request): Promise<IResponse> => {
   const { videoUrl } = req.body;

@@ -3,6 +3,7 @@ import cors from "cors";
 import { AppConfig } from "./src/interfaces/config/config";
 
 import youtubeDownloaderRoute from "./src/modules/yt-downloader/youtube-downloader.route";
+import audioTrimmerRoute from "./src/modules/audio-trimmmer/audio-trimmmer.route";
 
 const CONFIG = AppConfig();
 
@@ -14,6 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use("/browserless/api/youtube-downloader", youtubeDownloaderRoute);
+app.use("/browserless/api/audio-trimmer", audioTrimmerRoute);
 
 app.get("/browserless/api", (req: Request, res: Response) => {
   res.send("Api Working!");

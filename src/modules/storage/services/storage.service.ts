@@ -43,7 +43,7 @@ export const uploadToSupabase = async (
     };
   } else {
     console.debug(
-      `[Log] Audio compressed and uploaded to Supabase: ${data.path}`
+      `[Debug] Audio compressed and uploaded to Supabase: ${data.path}`
     );
     return {
       status: 200,
