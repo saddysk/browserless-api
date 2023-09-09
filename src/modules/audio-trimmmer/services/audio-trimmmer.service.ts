@@ -1,6 +1,9 @@
 import { IResponse } from "../../../interfaces/response.interface";
 import axios from "axios";
-import { uploadToSupabase } from "../../storage/services/storage.service";
+import {
+  getPublicUrl,
+  uploadToSupabase,
+} from "../../storage/services/storage.service";
 import { v4 as uuidv4 } from "uuid";
 import ffmpeg from "fluent-ffmpeg";
 import { PassThrough } from "stream";
@@ -46,7 +49,7 @@ export const audioTrimmerService = async (req: Request): Promise<IResponse> => {
       .audioCodec("libmp3lame")
       .toFormat("mp3");
 
-    const uploadResponse = await new Promise<IResponse>(
+    const trimmedAudioUrl = await new Promise<string>(
       async (resolve, reject) => {
         command.on("error", (error: any) => {
           reject(error);
@@ -56,17 +59,21 @@ export const audioTrimmerService = async (req: Request): Promise<IResponse> => {
 
         console.log("[Log] Audio trimmed successfully. Uploading to cloud.");
         const filePath = `trimmed-audio/${uuidv4()}.mp3`;
-        const uploadResponse = await uploadToSupabase(
-          filePath,
-          compressedStream
-        );
+        const audioPath = await uploadToSupabase(filePath, compressedStream);
 
-        resolve(uploadResponse);
+        const trimmedAudioUrl = await getPublicUrl(audioPath);
+
+        resolve(trimmedAudioUrl);
       }
     );
 
     // Return the upload response
-    return uploadResponse;
+    return {
+      status: 200,
+      body: {
+        data: trimmedAudioUrl,
+      },
+    };
   } catch (error) {
     console.error(`[Error] ${error}`);
     return {

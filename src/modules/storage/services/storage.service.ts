@@ -1,6 +1,5 @@
 import { AppConfig } from "../../../interfaces/config/config";
 import supabase from "../../../interfaces/config/supabase.config";
-import { IResponse } from "../../../interfaces/response.interface";
 
 const CONFIG = AppConfig();
 
@@ -19,9 +18,9 @@ type FileBody =
 export const uploadToSupabase = async (
   filePath: string,
   file: FileBody
-): Promise<IResponse> => {
+): Promise<string> => {
   if (!filePath || !file) {
-    throw new Error("Invalid file path or file data to be uploaded");
+    throw new Error("Invalid filepath or file data to be uploaded");
   }
 
   const { data, error } = await supabase.storage
@@ -34,24 +33,11 @@ export const uploadToSupabase = async (
     });
 
   if (error) {
-    console.error("[Error] Failed uploading audio to Supabase:", error);
-    return {
-      status: 400,
-      body: {
-        error: `Failed to upload audio to Supabase: ${error.message}`,
-      },
-    };
-  } else {
-    console.debug(
-      `[Debug] Audio compressed and uploaded to Supabase: ${data.path}`
-    );
-    return {
-      status: 200,
-      body: {
-        data: await getPublicUrl(data.path),
-      },
-    };
+    console.error(`${error}`);
+    throw new Error("Failed to upload in supabase.");
   }
+
+  return data.path;
 };
 
 export const getPublicUrl = async (path: string): Promise<string> => {
