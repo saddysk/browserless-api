@@ -1,16 +1,12 @@
 import { IResponse } from "../../../interfaces/response.interface";
 import axios from "axios";
-import {
-  getPublicUrl,
-  uploadToSupabase,
-} from "../../storage/services/storage.service";
-import { v4 as uuidv4 } from "uuid";
+import { uploadToSupabase } from "../../storage/services/storage.service";
 import ffmpeg from "fluent-ffmpeg";
 import { PassThrough } from "stream";
 import { Request } from "express";
 
 export const audioTrimmerService = async (req: Request): Promise<IResponse> => {
-  const { audioUrl, startTimeInMs, endTimeInMs } = req.body;
+  const { audioUrl, startTimeInMs, endTimeInMs, fileName } = req.body;
 
   if (!["http://", "https://"].some((str) => audioUrl.includes(str))) {
     return {
@@ -49,29 +45,28 @@ export const audioTrimmerService = async (req: Request): Promise<IResponse> => {
       .audioCodec("libmp3lame")
       .toFormat("mp3");
 
-    const trimmedAudioUrl = await new Promise<string>(
-      async (resolve, reject) => {
-        command.on("error", (error: any) => {
-          reject(error);
-        });
+    const trimmedAudio = await new Promise<string>(async (resolve, reject) => {
+      command.on("error", (error: any) => {
+        reject(error);
+      });
 
-        command.pipe(compressedStream, { end: true });
+      command.pipe(compressedStream, { end: true });
 
-        console.log("[Log] Audio trimmed successfully. Uploading to cloud.");
-        const filePath = `trimmed-audio/${uuidv4()}.mp3`;
-        const audioPath = await uploadToSupabase(filePath, compressedStream);
+      console.log("[Log] Audio trimmed successfully. Uploading to cloud.");
 
-        const trimmedAudioUrl = await getPublicUrl(audioPath);
+      const filePath = `trimmed-audio/${fileName}.mp3`;
+      const audioPath = await uploadToSupabase(filePath, compressedStream);
 
-        resolve(trimmedAudioUrl);
-      }
-    );
+      resolve(audioPath);
+    });
+
+    console.debug(`[Debug] Trimmed audio uploaded to cloud: ${trimmedAudio}`);
 
     // Return the upload response
     return {
       status: 200,
       body: {
-        data: trimmedAudioUrl,
+        data: trimmedAudio,
       },
     };
   } catch (error) {
