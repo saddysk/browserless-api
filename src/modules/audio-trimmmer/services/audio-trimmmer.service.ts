@@ -17,7 +17,7 @@ export const audioTrimmerService = async (req: Request): Promise<IResponse> => {
     };
   }
 
-  if (!startTimeInMs || !endTimeInMs) {
+  if (startTimeInMs == null || endTimeInMs == null) {
     return {
       status: 400,
       body: {
