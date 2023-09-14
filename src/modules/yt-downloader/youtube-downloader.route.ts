@@ -3,7 +3,7 @@ import youtubeDownloaderService from "./services/youtube-donwloader.service";
 
 const youtubeDownloaderRoute = express.Router();
 
-youtubeDownloaderRoute.post("/", async (req: Request, res: Response) => {
+youtubeDownloaderRoute.post("/:id", async (req: Request, res: Response) => {
   const response = await youtubeDownloaderService(req);
   res.status(response["status"]);
   res.send(response);

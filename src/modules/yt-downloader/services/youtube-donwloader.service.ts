@@ -57,7 +57,7 @@ const youtubeDownloaderService = async (req: Request): Promise<IResponse> => {
       };
     }
 
-    processInBackground(callback, audioStream);
+    processInBackground(callback, audioStream, req.params.id);
 
     return {
       status: 200,
@@ -111,7 +111,8 @@ async function simulateProcessing(
 // Background processing
 async function processInBackground(
   callback: string,
-  audioStream: internal.Readable
+  audioStream: internal.Readable,
+  id: string
 ) {
   // Compress the audio stream using fluent-ffmpeg
   console.debug(`[Debug] Retrieving & compressing audio...`);
@@ -129,6 +130,7 @@ async function processInBackground(
     // Send the result to the callback URL
     await axios
       .post(callback, {
+        id,
         url: audioUrl,
       })
       .catch((error) =>
