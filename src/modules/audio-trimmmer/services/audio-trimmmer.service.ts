@@ -54,7 +54,7 @@ export const audioTrimmerService = async (req: Request): Promise<IResponse> => {
 
       console.log("[Log] Audio trimmed successfully. Uploading to cloud.");
 
-      const filePath = `trimmed-audio/${fileName}.mp3`;
+      const filePath = `trimmed-audio/${fileName}`;
       // const audioPath = await uploadToSupabase(filePath, compressedStream);
       const audioUrl = await uploadToAwsS3(filePath, compressedStream);
 
