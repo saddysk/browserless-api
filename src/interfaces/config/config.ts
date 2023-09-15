@@ -7,8 +7,12 @@ const env = cleanEnv(process.env, {
 
   SUPABASE_URL: str({ default: "" }),
   SUPABASE_SERVICE_ROLE_KEY: str({ default: "" }),
-
   SUPABASE_BUCKET: str({ default: "public" }),
+
+  S3_BUCKET: str({ default: undefined }),
+  AWS_ACCESS_KEY_ID: str({ default: undefined }),
+  AWS_ACCESS_KEY_SECRET: str({ default: undefined }),
+  AWS_REGION: str({ default: "us-east-1" }),
 });
 
 const _AppConfig = () => ({ ...env } as const);

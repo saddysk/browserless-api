@@ -1,3 +1,5 @@
+import { ManagedUpload } from "aws-sdk/clients/s3";
+import s3 from "../../../interfaces/config/aws.config";
 import { AppConfig } from "../../../interfaces/config/config";
 import supabase from "../../../interfaces/config/supabase.config";
 
@@ -34,7 +36,7 @@ export const uploadToSupabase = async (
 
   if (error) {
     console.error(`${error}`);
-    throw new Error("Failed to upload in supabase.");
+    throw new Error(`Failed to upload in supabase: ${error.message}`);
   }
 
   return data.path;
@@ -55,3 +57,31 @@ export const getPublicUrl = async (path: string): Promise<string> => {
 
   return data.publicUrl;
 };
+
+export const uploadToAwsS3 = async (
+  filePath: string,
+  file: FileBody
+): Promise<string> => {
+  const params = {
+    Bucket: CONFIG.S3_BUCKET,
+    Key: filePath,
+    Body: file,
+    ACL: "public-read",
+  };
+
+  // Upload the object to S3
+  const uploadedPath = await new Promise((resolve, reject) => {
+    s3.upload(params, (err: Error, data: ManagedUpload.SendData) => {
+      if (err) {
+        console.error("Error uploading to S3.\n", err);
+        reject(err);
+      } else {
+        resolve(data.Location);
+      }
+    });
+  });
+
+  return uploadedPath as string;
+};
+
+// "videoUrl": "https://www.youtube.com/watch?v=HAnw168huqA",

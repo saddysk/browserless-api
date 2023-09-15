@@ -4,10 +4,7 @@ import ffmpeg from "fluent-ffmpeg";
 import internal, { PassThrough } from "stream";
 import { v4 as uuidv4 } from "uuid";
 import { IResponse } from "../../../interfaces/response.interface";
-import {
-  getPublicUrl,
-  uploadToSupabase,
-} from "../../storage/services/storage.service";
+import { uploadToAwsS3 } from "../../storage/services/storage.service";
 import axios from "axios";
 
 const youtubeDownloaderService = async (req: Request): Promise<IResponse> => {
@@ -98,9 +95,10 @@ async function simulateProcessing(
 
     const filePath = `youtube-audio/${uuidv4()}.mp3`;
 
-    const audioPath = await uploadToSupabase(filePath, compressedStream);
+    // const audioPath = await uploadToSupabase(filePath, compressedStream);
+    // const audioUrl = await getPublicUrl(audioPath);
 
-    const audioUrl = await getPublicUrl(audioPath);
+    const audioUrl = await uploadToAwsS3(filePath, compressedStream);
 
     resolve(audioUrl);
   });

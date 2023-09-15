@@ -1,6 +1,6 @@
 import { IResponse } from "../../../interfaces/response.interface";
 import axios from "axios";
-import { uploadToSupabase } from "../../storage/services/storage.service";
+import { uploadToAwsS3 } from "../../storage/services/storage.service";
 import ffmpeg from "fluent-ffmpeg";
 import { PassThrough } from "stream";
 import { Request } from "express";
@@ -55,9 +55,10 @@ export const audioTrimmerService = async (req: Request): Promise<IResponse> => {
       console.log("[Log] Audio trimmed successfully. Uploading to cloud.");
 
       const filePath = `trimmed-audio/${fileName}.mp3`;
-      const audioPath = await uploadToSupabase(filePath, compressedStream);
+      // const audioPath = await uploadToSupabase(filePath, compressedStream);
+      const audioUrl = await uploadToAwsS3(filePath, compressedStream);
 
-      resolve(audioPath);
+      resolve(audioUrl);
     });
 
     console.debug(`[Debug] Trimmed audio uploaded to cloud: ${trimmedAudio}`);
