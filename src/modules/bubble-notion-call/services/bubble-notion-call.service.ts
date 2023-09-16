@@ -22,8 +22,6 @@ export const bubbleNotionCallService = async (
     data: notionData.data,
   };
 
-  console.log(config);
-
   try {
     const response = await axios(config);
     return {
