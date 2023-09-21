@@ -55,9 +55,11 @@ export const bubbleNotionCallService = async (
 };
 
 function formatAndGetNotionData(request: IRequest) {
-  console.debug(`[Debug] ${request}`);
-
   const { title, database_id, transcription, summary, timestamp } = request;
+
+  console.debug(
+    `[Debug] title: ${title}\ntranscription: ${transcription}\nsummary: ${summary}\ntimestamp: ${timestamp}`
+  );
 
   const transcriptionChunks = splitStringIntoChunks(transcription);
   const summaryChunks = splitStringIntoChunks(summary);
