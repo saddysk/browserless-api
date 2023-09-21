@@ -1,25 +1,32 @@
 import { Request } from "express";
 import axios from "axios";
 import { IResponse } from "../../../interfaces/response.interface";
+import mainBlockJson, { IBlock } from "./main-block";
+
+interface IRequest {
+  title: string;
+  database_id: string;
+  summary: string;
+  transcription: string;
+  timestamp: string;
+}
 
 export const bubbleNotionCallService = async (
   req: Request
 ): Promise<IResponse> => {
-  const { url, authorization } = req.body;
+  const { authorization, ...requestData } = req.body;
 
-  const NOTION_URL = "https://api.notion.com/v1/pages";
-
-  const notionData = await axios.get(url);
+  const notionData = formatAndGetNotionData(requestData);
 
   const config = {
-    url: NOTION_URL,
+    url: "https://api.notion.com/v1/pages",
     method: "POST",
     headers: {
       Authorization: authorization,
       "Content-Type": "application/json",
       "Notion-Version": "2022-06-28",
     },
-    data: notionData.data,
+    data: notionData,
   };
 
   try {
@@ -40,3 +47,88 @@ export const bubbleNotionCallService = async (
     };
   }
 };
+
+function formatAndGetNotionData(request: IRequest) {
+  const { title, database_id, transcription, summary, timestamp } = request;
+
+  const transcriptionChunks = splitStringIntoChunks(transcription);
+  const summaryChunks = splitStringIntoChunks(summary);
+  const timestampChunks = splitStringIntoChunks(timestamp);
+
+  const transcriptionBlock = createChunk(transcriptionChunks);
+  const summaryBlock = createChunk(summaryChunks);
+  const timestampBlock = createChunk(timestampChunks);
+
+  return mainBlockJson({
+    TITLE: title,
+    DATABASE_ID: database_id,
+    BLOCK_TRANSCRIPTION: transcriptionBlock,
+    BLOCK_SUMMARY: summaryBlock,
+    BLOCK_TIMESTAMP: timestampBlock,
+  });
+}
+
+function splitStringIntoChunks(inputString: string): string[] {
+  const chunkSize = 1500;
+  const chunks: string[] = [];
+  let startIndex = 0;
+
+  while (startIndex < inputString.length) {
+    let endIndex = startIndex + chunkSize;
+
+    // Check if endIndex is within the string length
+    if (endIndex > inputString.length) {
+      endIndex = inputString.length;
+    } else {
+      // Find the nearest punctuation mark before or after the endIndex
+      const punctuation = /[.,!?;:]/;
+      let beforeIndex = endIndex;
+      let afterIndex = endIndex;
+
+      while (beforeIndex >= startIndex || afterIndex <= inputString.length) {
+        if (
+          beforeIndex >= startIndex &&
+          punctuation.test(inputString[beforeIndex])
+        ) {
+          endIndex = beforeIndex + 1;
+          break;
+        }
+        if (
+          afterIndex <= inputString.length &&
+          punctuation.test(inputString[afterIndex])
+        ) {
+          endIndex = afterIndex + 1;
+          break;
+        }
+
+        beforeIndex--;
+        afterIndex++;
+      }
+    }
+
+    const chunk = inputString.substring(startIndex, endIndex);
+    chunks.push(chunk);
+    startIndex = endIndex;
+  }
+
+  return chunks;
+}
+
+function createChunk(chunks: string[]): IBlock[] {
+  return chunks.map((chunk) => {
+    return {
+      object: "block",
+      type: "paragraph",
+      paragraph: {
+        rich_text: [
+          {
+            type: "text",
+            text: {
+              content: chunk,
+            },
+          },
+        ],
+      },
+    };
+  });
+}
