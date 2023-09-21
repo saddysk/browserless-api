@@ -35,6 +35,8 @@ export const bubbleNotionCallService = async (
 
   try {
     const response = await axios(config);
+    console.debug(`[Debug] Data stored successfully`);
+
     return {
       status: 200,
       body: {
@@ -53,6 +55,8 @@ export const bubbleNotionCallService = async (
 };
 
 function formatAndGetNotionData(request: IRequest) {
+  console.debug(`[Debug] ${request}`);
+
   const { title, database_id, transcription, summary, timestamp } = request;
 
   const transcriptionChunks = splitStringIntoChunks(transcription);
