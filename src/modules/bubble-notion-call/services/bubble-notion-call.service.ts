@@ -29,6 +29,10 @@ export const bubbleNotionCallService = async (
     data: notionData,
   };
 
+  console.debug(
+    `[Debug] Storing data to notion at database: ${requestData.database_id}`
+  );
+
   try {
     const response = await axios(config);
     return {
