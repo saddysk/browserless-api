@@ -4,7 +4,7 @@ import { AppConfig } from "./src/interfaces/config/config";
 
 import youtubeDownloaderRoute from "./src/modules/yt-downloader/youtube-downloader.route";
 import audioTrimmerRoute from "./src/modules/audio-trimmmer/audio-trimmmer.route";
-import bubbleNotionCallRoute from "./src/modules/bubble-notion-call/bubble-notion-call.route";
+import bubbleRoute from "./src/modules/bubble/bubble.route";
 
 const CONFIG = AppConfig();
 
@@ -17,7 +17,7 @@ app.use(cors());
 
 app.use("/browserless/api/youtube-downloader", youtubeDownloaderRoute);
 app.use("/browserless/api/audio-trimmer", audioTrimmerRoute);
-app.use("/browserless/api/bubble-notion", bubbleNotionCallRoute);
+app.use("/browserless/api/bubble-notion", bubbleRoute);
 
 app.get("/browserless/api", (req: Request, res: Response) => {
   res.send("Api Working!");
