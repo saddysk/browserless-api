@@ -74,7 +74,7 @@ const youtubeDownloaderService = async (req: Request): Promise<IResponse> => {
 };
 
 // Simulate a time-consuming process
-async function simulateProcessing(
+export async function simulateProcessing(
   audioStream: internal.Readable
 ): Promise<string> {
   // Create a pass-through stream to store the compressed audio
