@@ -4,7 +4,7 @@ import simpleYtDownloaderService from "./services/simple-yt-downloader.service";
 
 const youtubeDownloaderRoute = express.Router();
 
-youtubeDownloaderRoute.get("", async (req: Request, res: Response) => {
+youtubeDownloaderRoute.get("/", async (req: Request, res: Response) => {
   const response = await simpleYtDownloaderService(req);
   res.status(response["status"]);
   res.send(response);
