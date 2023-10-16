@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import youtubeDownloaderService from "./services/youtube-donwloader.service";
+import youtubeDownloaderService from "./services/youtube-downloader.service";
 import simpleYtDownloaderService from "./services/simple-yt-downloader.service";
 import ytTranscriptionService from "./services/yt-transcription.service";
 
