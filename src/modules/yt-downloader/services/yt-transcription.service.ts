@@ -6,11 +6,14 @@ import { getTranscription } from "../../../utils/deepgram";
 import internal from "stream";
 
 const ytTranscriptionService = async (req: Request): Promise<IResponse> => {
-  const { callbackUrl, videoUrl } = req.body;
+  const { id, callbackUrl, videoUrl } = req.body;
 
   try {
-    if (!callbackUrl) {
-      const ERROR = `[Error] Invalid callback url: ${callbackUrl}`;
+    if (!id || !callbackUrl) {
+      const ERROR =
+        "[Error] Invalid" + !id &&
+        `id: ${id}, ` + !callbackUrl &&
+        `callback url: ${callbackUrl}`;
       console.error(ERROR);
       return {
         status: 400,
@@ -22,7 +25,7 @@ const ytTranscriptionService = async (req: Request): Promise<IResponse> => {
 
     const audioStream = await processDownloading(videoUrl);
 
-    processInBackground(callbackUrl, audioStream as internal.Readable);
+    processInBackground(id, callbackUrl, audioStream as internal.Readable);
 
     return {
       status: 200,
@@ -43,6 +46,7 @@ const ytTranscriptionService = async (req: Request): Promise<IResponse> => {
 
 // Background processing
 async function processInBackground(
+  id: string,
   callback: string,
   audioStream: internal.Readable
 ) {
@@ -67,6 +71,7 @@ async function processInBackground(
     // Send the result to the callback URL
     await axios
       .post(callback, {
+        id,
         transcription,
       })
       .catch((error) =>
