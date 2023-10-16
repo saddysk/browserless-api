@@ -1,15 +1,16 @@
 import { Request } from "express";
-import internal from "stream";
 import { IResponse } from "../../../interfaces/response.interface";
 import { processDownloading, simulateProcessing } from "./process-download";
 import axios from "axios";
+import { getTranscription } from "../../../utils/deepgram";
+import internal from "stream";
 
-const youtubeDownloaderService = async (req: Request): Promise<IResponse> => {
-  const { callback, videoUrl } = req.body;
+const ytTranscriptionService = async (req: Request): Promise<IResponse> => {
+  const { callbackUrl, videoUrl } = req.body;
 
   try {
-    if (!callback) {
-      const ERROR = `[Error] Invalid callback url: ${callback}`;
+    if (!callbackUrl) {
+      const ERROR = `[Error] Invalid callback url: ${callbackUrl}`;
       console.error(ERROR);
       return {
         status: 400,
@@ -21,11 +22,7 @@ const youtubeDownloaderService = async (req: Request): Promise<IResponse> => {
 
     const audioStream = await processDownloading(videoUrl);
 
-    processInBackground(
-      callback,
-      audioStream as internal.Readable,
-      req.params.id
-    );
+    processInBackground(callbackUrl, audioStream as internal.Readable);
 
     return {
       status: 200,
@@ -47,8 +44,7 @@ const youtubeDownloaderService = async (req: Request): Promise<IResponse> => {
 // Background processing
 async function processInBackground(
   callback: string,
-  audioStream: internal.Readable,
-  id: string
+  audioStream: internal.Readable
 ) {
   // Compress the audio stream using fluent-ffmpeg
   console.debug(`[Debug] Retrieving & compressing audio...`);
@@ -64,11 +60,14 @@ async function processInBackground(
       `[Debug] Processing completed and audio url: ${audioUrl}, sending to callback: ${callback}`
     );
 
+    const transcription = await getTranscription(audioUrl);
+
+    console.info(transcription);
+
     // Send the result to the callback URL
     await axios
       .post(callback, {
-        id,
-        url: audioUrl,
+        transcription,
       })
       .catch((error) =>
         console.error(
@@ -80,4 +79,4 @@ async function processInBackground(
   }
 }
 
-export default youtubeDownloaderService;
+export default ytTranscriptionService;

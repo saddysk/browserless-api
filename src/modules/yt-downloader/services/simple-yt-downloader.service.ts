@@ -1,45 +1,16 @@
 import youtubeDl from "youtube-dl-exec";
 import { IResponse } from "../../../interfaces/response.interface";
-import { simulateProcessing } from "./youtube-donwloader.service";
 import { Request } from "express";
+import { processDownloading, simulateProcessing } from "./process-download";
+import internal from "stream";
 
 const simpleYtDownloaderService = async (req: Request): Promise<IResponse> => {
   const videoUrl = req.query.videourl as string;
 
-  if (!["youtube.com", "youtu.be"].some((str) => videoUrl.includes(str))) {
-    return {
-      status: 400,
-      body: {
-        error: `Invalid url: ${videoUrl}`,
-      },
-    };
-  }
-
-  console.log(`[Log] Starting download: ${videoUrl}`);
-
   try {
-    const audioStream = youtubeDl.exec(
-      videoUrl,
-      {
-        extractAudio: true,
-        format: "bestaudio",
-        output: "-",
-      },
-      { stdio: ["ignore", "pipe", "pipe"] }
-    ).stdout;
+    const audioStream = await processDownloading(videoUrl);
 
-    if (audioStream == null) {
-      const ERROR = `[Error]  Couldn't download the file`;
-      console.error(ERROR);
-      return {
-        status: 400,
-        body: {
-          message: ERROR,
-        },
-      };
-    }
-
-    const audioUrl = await simulateProcessing(audioStream);
+    const audioUrl = await simulateProcessing(audioStream as internal.Readable);
 
     return {
       status: 200,
