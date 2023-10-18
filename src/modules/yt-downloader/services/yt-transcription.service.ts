@@ -66,8 +66,6 @@ async function processInBackground(
 
     const transcription = await getTranscription(audioUrl);
 
-    console.info(transcription);
-
     // Send the result to the callback URL
     await axios
       .post(callback, {
