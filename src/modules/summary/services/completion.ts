@@ -29,9 +29,7 @@ export async function createCompletion(
       temperature: 0.8,
     };
 
-    const response = await openai.chat.completions.create(params, {
-      maxRetries: 3,
-    });
+    const response = await openai.chat.completions.create(params);
 
     return response.choices[0].message.content!;
   } catch (error) {
