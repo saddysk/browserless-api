@@ -104,5 +104,9 @@ async function processInBackground(
   try {
   } catch (error) {
     console.error("Error processing the task:", error);
+    await axios.post(callbackUrl, {
+      id,
+      isOpenAiError: true,
+    });
   }
 }
