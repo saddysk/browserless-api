@@ -4,7 +4,7 @@ import {
 } from "openai/resources";
 import openai from "../../../config/openai.config";
 
-export const MaxtTokens = 500 * 4;
+export const MaxtTokens = 1000 * 4;
 
 export async function createCompletion(
   prompt: string,
