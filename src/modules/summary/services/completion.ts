@@ -1,8 +1,5 @@
-import {
-  ChatCompletionCreateParamsNonStreaming,
-  ChatCompletionMessageParam,
-} from "openai/resources";
-import openai from "../../../config/openai.config";
+import azureOpenAi from "../../../config/azure-openai.config";
+import { ChatMessage, GetChatCompletionsOptions } from "@azure/openai";
 
 export const MaxtTokens = 1000 * 4;
 
@@ -10,7 +7,7 @@ export async function createCompletion(
   prompt: string,
   article: string
 ): Promise<string> {
-  const messages: ChatCompletionMessageParam[] = [
+  const messages: ChatMessage[] = [
     {
       role: "system",
       content: prompt,
@@ -22,16 +19,30 @@ export async function createCompletion(
   ];
 
   try {
-    const params: ChatCompletionCreateParamsNonStreaming = {
-      model: process.env.OPENAI_MODEL!,
-      messages,
-      max_tokens: MaxtTokens,
+    // OPENAI
+    // const params: ChatCompletionCreateParamsNonStreaming = {
+    //   model: process.env.OPENAI_MODEL!,
+    //   messages,  // type should be "ChatCompletionMessageParam[]"
+    //   max_tokens: MaxtTokens,
+    //   temperature: 0.8,
+    // };
+
+    // const response = await openai.chat.completions.create(params);
+
+    // AZURE
+    const params: GetChatCompletionsOptions = {
+      maxTokens: MaxtTokens,
+      model: process.env.AZURE_OPENAI_MODEL,
       temperature: 0.8,
     };
 
-    const response = await openai.chat.completions.create(params);
+    const response = await azureOpenAi.getChatCompletions(
+      process.env.AZURE_OPENAI_DEPLOYMENT_ID!,
+      messages,
+      params
+    );
 
-    return response.choices[0].message.content!;
+    return response.choices[0].message?.content!;
   } catch (error) {
     console.error(error, "api/summary error");
     throw new Error(`[Error] 500: Failed to get summary`);
