@@ -59,10 +59,6 @@ function formatAndGetNotionData(request: IRequest) {
   const { title, database_id, transcription, summary, timestamp, shownotes } =
     request;
 
-  console.debug(
-    `[Debug] title: ${title}\ntranscription: ${transcription}\nsummary: ${summary}\ntimestamp: ${timestamp}`
-  );
-
   const transcriptionChunks = splitStringIntoChunks(transcription);
   const summaryChunks = splitStringIntoChunks(summary);
   const timestampChunks = splitStringIntoChunks(timestamp);
