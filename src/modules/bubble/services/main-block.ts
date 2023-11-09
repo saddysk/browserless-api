@@ -19,6 +19,7 @@ interface IRequest {
   BLOCK_TRANSCRIPTION: IBlock[];
   BLOCK_SUMMARY: IBlock[];
   BLOCK_TIMESTAMP: IBlock[];
+  BLOCK_SHOWNOTES?: IBlock[];
 }
 
 const mainBlockJson = (data: IRequest) => {
@@ -28,6 +29,7 @@ const mainBlockJson = (data: IRequest) => {
     BLOCK_TRANSCRIPTION,
     BLOCK_SUMMARY,
     BLOCK_TIMESTAMP,
+    BLOCK_SHOWNOTES,
   } = data;
 
   const spreadBlocks = (blocks: IBlock[]) => {
@@ -36,7 +38,7 @@ const mainBlockJson = (data: IRequest) => {
     }));
   };
 
-  return {
+  const blocks = {
     parent: { database_id: `${DATABASE_ID}` },
     properties: {
       Title: {
@@ -99,6 +101,21 @@ const mainBlockJson = (data: IRequest) => {
       ...spreadBlocks(BLOCK_TIMESTAMP),
     ],
   };
+
+  if (BLOCK_SHOWNOTES) {
+    blocks.children.push(
+      {
+        object: "block",
+        type: "heading_3",
+        heading_3: {
+          rich_text: [{ type: "text", text: { content: "Shownotes" } }],
+        },
+      },
+      ...spreadBlocks(BLOCK_SHOWNOTES)
+    );
+  }
+
+  return blocks;
 };
 
 export default mainBlockJson;

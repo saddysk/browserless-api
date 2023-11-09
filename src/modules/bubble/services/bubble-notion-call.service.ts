@@ -9,6 +9,7 @@ interface IRequest {
   summary: string;
   transcription: string;
   timestamp: string;
+  shownotes?: string;
 }
 
 export const bubbleNotionCallService = async (
@@ -55,7 +56,8 @@ export const bubbleNotionCallService = async (
 };
 
 function formatAndGetNotionData(request: IRequest) {
-  const { title, database_id, transcription, summary, timestamp } = request;
+  const { title, database_id, transcription, summary, timestamp, shownotes } =
+    request;
 
   console.debug(
     `[Debug] title: ${title}\ntranscription: ${transcription}\nsummary: ${summary}\ntimestamp: ${timestamp}`
@@ -64,10 +66,16 @@ function formatAndGetNotionData(request: IRequest) {
   const transcriptionChunks = splitStringIntoChunks(transcription);
   const summaryChunks = splitStringIntoChunks(summary);
   const timestampChunks = splitStringIntoChunks(timestamp);
+  const shownotesChunks = shownotes
+    ? splitStringIntoChunks(shownotes)
+    : undefined;
 
   const transcriptionBlock = createChunk(transcriptionChunks);
   const summaryBlock = createChunk(summaryChunks);
   const timestampBlock = createChunk(timestampChunks);
+  const shownotesBlock = shownotesChunks
+    ? createChunk(shownotesChunks)
+    : undefined;
 
   return mainBlockJson({
     TITLE: title,
@@ -75,6 +83,7 @@ function formatAndGetNotionData(request: IRequest) {
     BLOCK_TRANSCRIPTION: transcriptionBlock,
     BLOCK_SUMMARY: summaryBlock,
     BLOCK_TIMESTAMP: timestampBlock,
+    BLOCK_SHOWNOTES: shownotesBlock,
   });
 }
 
