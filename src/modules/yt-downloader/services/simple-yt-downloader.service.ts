@@ -1,4 +1,3 @@
-import youtubeDl from "youtube-dl-exec";
 import { IResponse } from "../../../interfaces/response.interface";
 import { Request } from "express";
 import { processDownloading, simulateProcessing } from "./process-download";

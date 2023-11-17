@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { generateSummaryService } from "./services/generate-summary.service";
+import { generateSummaryService } from "./services/summarify.service";
 
 const summaryRoute = express.Router();
 
