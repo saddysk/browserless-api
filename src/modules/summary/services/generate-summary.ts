@@ -4,6 +4,7 @@ import { splitContentToTokenLimit } from "./split-within-token-limit";
 import { ContentSource } from "../summarify.enum";
 import {
   getContentFromAudioUrl,
+  getContentFromBase64,
   getContentFromWebUrl,
   getContentFromYtUrl,
 } from "./retrieve-content";
@@ -84,8 +85,8 @@ async function getContent(
   contentSource: ContentSource
 ): Promise<string> {
   switch (contentSource) {
-    // case ContentSource.Pdf:
-    //   return getContentFromBase64(input);
+    case ContentSource.Pdf:
+      return getContentFromBase64(input);
     case ContentSource.WebUrl:
     case ContentSource.BlogUrl:
       return getContentFromWebUrl(input);

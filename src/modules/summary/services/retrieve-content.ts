@@ -5,33 +5,22 @@ import {
   simulateProcessing,
 } from "../../yt-downloader/services/process-download";
 import internal from "stream";
+import pdf from "pdf-parse";
 
-// export async function getContentFromBase64(base64: string): Promise<string> {
-//   const pdfBuffer = Buffer.from(base64, "base64");
+export async function getContentFromBase64(base64: string): Promise<string> {
+  const pdfBuffer = Buffer.from(base64, "base64");
 
-//   const pdfReader = new PdfReader({});
+  try {
+    // Load the PDF file
+    const data = await pdf(pdfBuffer);
 
-//   const content = await new Promise<string>((resolve, reject) => {
-//     try {
-//       let content = "";
-
-//       pdfReader.parseBuffer(pdfBuffer, function (err, item) {
-//         if (err) {
-//           console.error("Error parsing PDF:", err);
-//           reject(err);
-//         } else if (!item) {
-//           resolve(content.replaceAll("\u0000", ""));
-//         } else if (item.text) {
-//           content += item.text;
-//         }
-//       });
-//     } catch (error) {
-//       reject(error);
-//     }
-//   });
-
-//   return content;
-// }
+    // Extract and return the text content
+    return data.text.replaceAll("\u0000", "");
+  } catch (error) {
+    console.error("Error processing PDF:", error);
+    throw error;
+  }
+}
 
 export async function getContentFromWebUrl(url: string): Promise<string> {
   const headers = {
