@@ -38,18 +38,23 @@ export const generateSummary = async (data: any) => {
     );
 
     // Send the result to the callback URL
-    await axios.post(callbackUrl, {
-      summaryId,
-      headline,
-      summary,
-      content,
-    });
-  } catch (error) {
-    console.error("Error processing the task:", error);
-    await axios.post(callbackUrl, {
-      summaryId,
-      isOpenAiError: true,
-    });
+    await axios
+      .post(callbackUrl, {
+        summaryId,
+        headline,
+        summary,
+        content,
+      })
+      .catch((error) => console.error(error.response?.statusText));
+  } catch (error: any) {
+    console.error(error);
+    await axios
+      .post(callbackUrl, {
+        summaryId,
+        errorMessage:
+          error.message || "Failed to process the content or it's source.",
+      })
+      .catch((error) => console.error(error.response?.statusText));
   }
 };
 

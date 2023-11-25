@@ -13,15 +13,6 @@ const errorResponseObject = (status: number, message: string): IResponse => {
   };
 };
 
-function areFieldsValid(obj: any) {
-  for (let key in obj) {
-    if (obj[key] === null || obj[key] === "") {
-      return false;
-    }
-  }
-  return true;
-}
-
 export const generateSummaryService = async (
   req: Request
 ): Promise<IResponse> => {
@@ -36,10 +27,6 @@ export const generateSummaryService = async (
   } = req.body;
 
   try {
-    if (!areFieldsValid(req.body)) {
-      return errorResponseObject(400, "MISSING_FIELD");
-    }
-
     const summaryPrompt = createPrompt(outputLanguage, writingStyle, style);
     const headlinePrompt = createHeadlinePrompt(outputLanguage);
 
