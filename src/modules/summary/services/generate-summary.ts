@@ -45,7 +45,7 @@ export const generateSummary = async (data: any) => {
         summary,
         content,
       })
-      .catch((error) => console.error(error.response?.statusText));
+      .catch((error) => console.log(error.response));
   } catch (error: any) {
     console.error(error);
     await axios
@@ -54,7 +54,7 @@ export const generateSummary = async (data: any) => {
         errorMessage:
           error.message || "Failed to process the content or it's source.",
       })
-      .catch((error) => console.error(error.response?.statusText));
+      .catch((error) => console.log(error.response));
   }
 };
 
