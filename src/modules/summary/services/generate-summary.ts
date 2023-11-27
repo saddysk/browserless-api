@@ -47,12 +47,13 @@ export const generateSummary = async (data: any) => {
       })
       .catch((error) => console.log(error.response));
   } catch (error: any) {
-    console.error(error);
+    const errorMessage =
+      error.response?.data?.message ??
+      (error || "Failed to process the content or it's source.");
     await axios
       .post(callbackUrl, {
         summaryId,
-        errorMessage:
-          error.message || "Failed to process the content or it's source.",
+        errorMessage,
       })
       .catch((error) => console.log(error.response));
   }

@@ -17,8 +17,7 @@ export async function getContentFromBase64(base64: string): Promise<string> {
     // Extract and return the text content
     return data.text.replaceAll("\u0000", "");
   } catch (error) {
-    console.error("Error processing PDF:", error);
-    throw error;
+    throw new Error("Invalid text content provided. Please revalidate.");
   }
 }
 
@@ -28,16 +27,24 @@ export async function getContentFromWebUrl(url: string): Promise<string> {
     "X-RapidAPI-Key": process.env.RAPIDAPI_KEY,
     "X-RapidAPI-Host": process.env.RAPIDAPI_HOST,
   };
+
   const data = {
     type: "Url",
     source: url,
     processingLevel: "Basic",
   };
-  const response = await axios.post("https://recapiogpt.p.rapidapi.com", data, {
-    headers,
-  });
 
-  return response.data.text;
+  try {
+    const response = await axios.post(
+      "https://recapiogpt.p.rapidapi.com",
+      data,
+      { headers }
+    );
+
+    return response.data.text;
+  } catch {
+    throw new Error(`Can not read data from the provided url.`);
+  }
 }
 
 export async function getContentFromYtUrl(url: string): Promise<string> {
@@ -45,11 +52,17 @@ export async function getContentFromYtUrl(url: string): Promise<string> {
     return "";
   }
 
-  const audioStream = await processDownloading(url);
-  const audioUrl = await simulateProcessing(audioStream as internal.Readable);
+  try {
+    const audioStream = await processDownloading(url);
+    const audioUrl = await simulateProcessing(audioStream as internal.Readable);
 
-  const alternative = await getTranscription(audioUrl);
-  return alternative.transcript;
+    const alternative = await getTranscription(audioUrl);
+    return alternative.transcript;
+  } catch {
+    throw new Error(
+      "Cannot read data. Please check if it is a valid youtube url."
+    );
+  }
 }
 
 export async function getContentFromAudioUrl(url: string): Promise<string> {
@@ -59,8 +72,14 @@ export async function getContentFromAudioUrl(url: string): Promise<string> {
     return "";
   }
 
-  const alternative = await getTranscription(url);
-  return alternative.transcript;
+  try {
+    const alternative = await getTranscription(url);
+    return alternative.transcript;
+  } catch {
+    throw new Error(
+      "Cannot read data. Please check if it is a valid youtube url."
+    );
+  }
 }
 
 // const getWebContent = async (url: string): Promise<string> => {
