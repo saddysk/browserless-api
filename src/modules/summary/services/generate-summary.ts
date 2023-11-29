@@ -79,10 +79,12 @@ async function simulateProcessing(
             createCompletion(summaryPrompt, article, summaryId)
           )
         );
-        const finalSummary = summary.join("/n").replace(/^\n+/, "");
-        const headline = await createCompletion(headlinePrompt, finalSummary);
 
+        console.log(`Processing for summary id: ${summaryId}`);
+        const finalSummary = summary.join("/n").replace(/^\n+/, "");
         console.log(`Summary generated for id: ${summaryId}`);
+        const headline = await createCompletion(headlinePrompt, finalSummary);
+        console.log(`Headline generated for id: ${summaryId}`);
 
         resolve({ headline, summary: finalSummary });
       } catch (error) {

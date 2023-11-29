@@ -46,19 +46,11 @@ export async function createCompletion(
       temperature: 0.8,
     };
 
-    if (summaryId) {
-      console.log(`processing > ${summaryId}`);
-    }
-
     const response = await azureOpenAi.getChatCompletions(
       process.env.AZURE_OPENAI_DEPLOYMENT_ID!,
       messages,
       params
     );
-
-    if (summaryId) {
-      console.log(`summary recevied > ${summaryId}`);
-    }
 
     return response.choices[0].message?.content!;
   } catch (error) {
