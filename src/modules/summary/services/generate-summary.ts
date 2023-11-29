@@ -76,17 +76,13 @@ async function simulateProcessing(
       try {
         const summary = await Promise.all(
           tokenVerifiedContent.map((article) =>
-            createCompletion(summaryId, summaryPrompt, article)
+            createCompletion(summaryPrompt, article, summaryId)
           )
         );
         const finalSummary = summary.join("/n").replace(/^\n+/, "");
-        const headline = await createCompletion(
-          summaryId,
-          headlinePrompt,
-          finalSummary
-        );
+        const headline = await createCompletion(headlinePrompt, finalSummary);
 
-        console.log(`returning the response for summary: ${summaryId}`);
+        console.log(`Summary generated for id: ${summaryId}`);
 
         resolve({ headline, summary: finalSummary });
       } catch (error) {

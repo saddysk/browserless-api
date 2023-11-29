@@ -1,14 +1,19 @@
 import azureOpenAi from "../../../config/azure-openai.config";
 import { ChatMessage, GetChatCompletionsOptions } from "@azure/openai";
+import openai from "../../../config/openai.config";
+import {
+  ChatCompletionCreateParamsNonStreaming,
+  ChatCompletionMessageParam,
+} from "openai/resources";
 
 export const MaxtTokens = 1000 * 4;
 
 export async function createCompletion(
-  summaryId: string,
   prompt: string,
-  article: string
+  article: string,
+  summaryId?: string
 ): Promise<string> {
-  const messages: ChatMessage[] = [
+  const messages: ChatCompletionMessageParam[] = [
     {
       role: "system",
       content: prompt,
@@ -23,10 +28,14 @@ export async function createCompletion(
     // OPENAI
     // const params: ChatCompletionCreateParamsNonStreaming = {
     //   model: process.env.OPENAI_MODEL!,
-    //   messages,  // type should be "ChatCompletionMessageParam[]"
+    //   messages, // type should be "ChatCompletionMessageParam[]"
     //   max_tokens: MaxtTokens,
     //   temperature: 0.8,
     // };
+
+    // if (summaryId) {
+    //   console.log(`processing > ${summaryId}`);
+    // }
 
     // const response = await openai.chat.completions.create(params);
 
@@ -37,7 +46,9 @@ export async function createCompletion(
       temperature: 0.8,
     };
 
-    console.log(`processing > ${summaryId}`);
+    if (summaryId) {
+      console.log(`processing > ${summaryId}`);
+    }
 
     const response = await azureOpenAi.getChatCompletions(
       process.env.AZURE_OPENAI_DEPLOYMENT_ID!,
@@ -45,7 +56,9 @@ export async function createCompletion(
       params
     );
 
-    console.log(`summary recevied > ${summaryId}`);
+    if (summaryId) {
+      console.log(`summary recevied > ${summaryId}`);
+    }
 
     return response.choices[0].message?.content!;
   } catch (error) {
