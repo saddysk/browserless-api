@@ -4,6 +4,7 @@ import { ChatMessage, GetChatCompletionsOptions } from "@azure/openai";
 export const MaxtTokens = 1000 * 4;
 
 export async function createCompletion(
+  summaryId: string,
   prompt: string,
   article: string
 ): Promise<string> {
@@ -36,13 +37,15 @@ export async function createCompletion(
       temperature: 0.8,
     };
 
-    console.log("processing");
+    console.log(`processing > ${summaryId}`);
 
     const response = await azureOpenAi.getChatCompletions(
       process.env.AZURE_OPENAI_DEPLOYMENT_ID!,
       messages,
       params
     );
+
+    console.log(`summary recevied > ${summaryId}`);
 
     return response.choices[0].message?.content!;
   } catch (error) {

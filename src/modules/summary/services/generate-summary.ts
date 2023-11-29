@@ -32,6 +32,7 @@ export const generateSummary = async (data: any) => {
     console.debug(`[Debug] summarizing for summary id: ${summaryId}`);
 
     const { headline, summary } = await simulateProcessing(
+      summaryId,
       tokenVerifiedContent,
       summaryPrompt,
       headlinePrompt
@@ -65,6 +66,7 @@ export const generateSummary = async (data: any) => {
 
 // Simulate a time-consuming process
 async function simulateProcessing(
+  summaryId: string,
   tokenVerifiedContent: string[],
   summaryPrompt: string,
   headlinePrompt: string
@@ -74,11 +76,17 @@ async function simulateProcessing(
       try {
         const summary = await Promise.all(
           tokenVerifiedContent.map((article) =>
-            createCompletion(summaryPrompt, article)
+            createCompletion(summaryId, summaryPrompt, article)
           )
         );
         const finalSummary = summary.join("/n").replace(/^\n+/, "");
-        const headline = await createCompletion(headlinePrompt, finalSummary);
+        const headline = await createCompletion(
+          summaryId,
+          headlinePrompt,
+          finalSummary
+        );
+
+        console.log(`returning the response for summary: ${summaryId}`);
 
         resolve({ headline, summary: finalSummary });
       } catch (error) {
