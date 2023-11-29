@@ -74,13 +74,12 @@ async function simulateProcessing(
   const response = await new Promise<ISummaryCallbackResponse>(
     async (resolve, reject) => {
       try {
+        console.log(`Processing for summary id: ${summaryId}`);
         const summary = await Promise.all(
           tokenVerifiedContent.map((article) =>
             createCompletion(summaryPrompt, article, summaryId)
           )
         );
-
-        console.log(`Processing for summary id: ${summaryId}`);
         const finalSummary = summary.join("/n").replace(/^\n+/, "");
         console.log(`Summary generated for id: ${summaryId}`);
         const headline = await createCompletion(headlinePrompt, finalSummary);
