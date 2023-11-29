@@ -36,6 +36,8 @@ export async function createCompletion(
       temperature: 0.8,
     };
 
+    console.log("processing");
+
     const response = await azureOpenAi.getChatCompletions(
       process.env.AZURE_OPENAI_DEPLOYMENT_ID!,
       messages,

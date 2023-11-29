@@ -46,7 +46,7 @@ export const generateSummaryService = async (
       },
     };
   } catch (error: any) {
-    console.error(`[Error] ${error}`);
+    console.log(`[Error] ${error}`);
     return errorResponseObject(
       500,
       `Error summarizing content: ${error.message}`
