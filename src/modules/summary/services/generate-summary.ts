@@ -16,7 +16,8 @@ interface ISummaryCallbackResponse {
 
 export const generateSummary = async (data: any) => {
   const {
-    rawContent,
+    input,
+    inputFile,
     contentSource,
     summaryPrompt,
     headlinePrompt,
@@ -25,13 +26,12 @@ export const generateSummary = async (data: any) => {
   } = data;
 
   try {
-    const content = await getContent(rawContent, contentSource);
-
+    const content = await getContent(input, inputFile, contentSource);
     const tokenVerifiedContent = splitContentToTokenLimit(content);
 
     console.debug(`[Debug] summarizing for summary id: ${summaryId}`);
 
-    const { headline, summary } = await simulateProcessing(
+    const { headline, summary } = await simulateSummaryProcessing(
       summaryId,
       tokenVerifiedContent,
       summaryPrompt,
@@ -53,7 +53,7 @@ export const generateSummary = async (data: any) => {
       `${error}` ??
       "Failed to process the content or it's source.";
 
-    console.log("[Error]: ", errorMessage);
+    console.log(errorMessage);
 
     await axios
       .post(callbackUrl, {
@@ -65,7 +65,7 @@ export const generateSummary = async (data: any) => {
 };
 
 // Simulate a time-consuming process
-async function simulateProcessing(
+async function simulateSummaryProcessing(
   summaryId: string,
   tokenVerifiedContent: string[],
   summaryPrompt: string,
@@ -97,18 +97,19 @@ async function simulateProcessing(
 
 async function getContent(
   input: string,
+  inputFile: Express.Multer.File,
   contentSource: ContentSource
 ): Promise<string> {
   switch (contentSource) {
     case ContentSource.Pdf:
-      return getContentFromBase64(input);
+      return getContentFromBase64(inputFile);
     case ContentSource.WebUrl:
     case ContentSource.BlogUrl:
       return getContentFromWebUrl(input);
     case ContentSource.YoutubeUrl:
       return getContentFromYtUrl(input);
     case ContentSource.AudioUrl:
-      return getContentFromAudioUrl(input);
+      return getContentFromAudioUrl(inputFile);
     default:
       return input;
   }

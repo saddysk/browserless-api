@@ -1,7 +1,7 @@
 import { Request } from "express";
 import internal from "stream";
 import { IResponse } from "../../../interfaces/response.interface";
-import { processDownloading, simulateProcessing } from "./process-download";
+import { processDownloading, simulateProcessingUrl } from "./process-download";
 import axios from "axios";
 
 const youtubeDownloaderService = async (req: Request): Promise<IResponse> => {
@@ -54,7 +54,7 @@ async function processInBackground(
   console.debug(`[Debug] Retrieving & compressing audio...`);
 
   try {
-    const audioUrl = await simulateProcessing(audioStream);
+    const audioUrl = await simulateProcessingUrl(audioStream);
 
     if (audioUrl == null) {
       console.error("[Error] Failed to process audio download.");

@@ -3,20 +3,28 @@ import { Alternative } from "@deepgram/sdk/dist/types";
 
 const deepgram = new Deepgram(process.env.DEEPGRAM_API_KEY!);
 
-export async function getTranscription(audioUrl: string): Promise<Alternative> {
-  console.debug(`[Debug] Transcribing audio url.`);
-
+export async function getTranscription(
+  audio: string | Buffer,
+  mimetype?: string
+): Promise<Alternative> {
   try {
-    const audioSource = {
-      url: audioUrl,
-    };
+    let response;
+    if (typeof audio === "string") {
+      response = await deepgram.transcription.preRecorded(
+        { url: audio },
+        { detect_language: true }
+      );
+    } else {
+      response = await deepgram.transcription.preRecorded(
+        {
+          buffer: audio,
+          mimetype: mimetype ?? "audio/mp3",
+        },
+        { detect_language: true }
+      );
+    }
 
-    const response = await deepgram.transcription.preRecorded(audioSource, {
-      detect_language: true,
-    });
-
-    const trascription =
-      response.results?.channels[0].alternatives[0];
+    const trascription = response.results?.channels[0].alternatives[0];
 
     if (trascription == null) {
       throw new Error("Failed to get transcription");

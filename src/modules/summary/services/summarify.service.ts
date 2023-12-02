@@ -16,6 +16,8 @@ const errorResponseObject = (status: number, message: string): IResponse => {
 export const generateSummaryService = async (
   req: Request
 ): Promise<IResponse> => {
+  const inputFile = req.file;
+
   const {
     input,
     outputLanguage,
@@ -27,11 +29,12 @@ export const generateSummaryService = async (
   } = req.body;
 
   try {
-    const summaryPrompt = createPrompt(outputLanguage, writingStyle, style);
-    const headlinePrompt = createHeadlinePrompt(outputLanguage);
+    const summaryPrompt = createPrompt(outputLanguage!, writingStyle!, style);
+    const headlinePrompt = createHeadlinePrompt(outputLanguage!);
 
     generateSummary({
-      rawContent: input,
+      input,
+      inputFile,
       contentSource,
       summaryPrompt,
       headlinePrompt,

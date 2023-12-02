@@ -1,6 +1,9 @@
 import { Request } from "express";
 import { IResponse } from "../../../interfaces/response.interface";
-import { processDownloading, simulateProcessing } from "./process-download";
+import {
+  processDownloading,
+  simulateProcessingBuffer,
+} from "./process-download";
 import axios from "axios";
 import { getTranscription } from "../../../utils/deepgram";
 import internal from "stream";
@@ -54,17 +57,8 @@ async function processInBackground(
   console.debug(`[Debug] Retrieving & compressing audio...`);
 
   try {
-    const audioUrl = await simulateProcessing(audioStream);
-
-    if (audioUrl == null) {
-      console.error("[Error] Failed to process audio download.");
-    }
-
-    console.debug(
-      `[Debug] Processing completed and audio url: ${audioUrl}, sending to callback: ${callback}`
-    );
-
-    const transcription = await getTranscription(audioUrl);
+    const audioBuffer = await simulateProcessingBuffer(audioStream);
+    const transcription = await getTranscription(audioBuffer);
 
     // Send the result to the callback URL
     await axios

@@ -1,6 +1,6 @@
 import { IResponse } from "../../../interfaces/response.interface";
 import { Request } from "express";
-import { processDownloading, simulateProcessing } from "./process-download";
+import { processDownloading, simulateProcessingUrl } from "./process-download";
 import internal from "stream";
 
 const simpleYtDownloaderService = async (req: Request): Promise<IResponse> => {
@@ -9,7 +9,9 @@ const simpleYtDownloaderService = async (req: Request): Promise<IResponse> => {
   try {
     const audioStream = await processDownloading(videoUrl);
 
-    const audioUrl = await simulateProcessing(audioStream as internal.Readable);
+    const audioUrl = await simulateProcessingUrl(
+      audioStream as internal.Readable
+    );
 
     return {
       status: 200,

@@ -49,7 +49,45 @@ export const processDownloading = async (
 };
 
 // Simulate a time-consuming process
-export async function simulateProcessing(
+export async function simulateProcessingBuffer(
+  audioStream: internal.Readable
+): Promise<Buffer> {
+  // Create a pass-through stream to store the compressed audio
+  const compressedStream = new PassThrough();
+
+  const command = ffmpeg()
+    .input(audioStream)
+    .audioCodec("libmp3lame")
+    .audioBitrate(128)
+    .toFormat("mp3");
+
+  const response = await new Promise<Buffer>(async (resolve, reject) => {
+    let buffers: Buffer[] = [];
+
+    command.on("error", (error: any) => {
+      reject(error);
+    });
+
+    compressedStream.on("readable", () => {
+      let chunk;
+      while (null !== (chunk = compressedStream.read())) {
+        buffers.push(chunk);
+      }
+    });
+
+    command.on("end", () => {
+      const buffer = Buffer.concat(buffers);
+      resolve(buffer);
+    });
+
+    command.pipe(compressedStream, { end: true });
+  });
+
+  return response;
+}
+
+// Simulate a time-consuming process
+export async function simulateProcessingUrl(
   audioStream: internal.Readable
 ): Promise<string> {
   // Create a pass-through stream to store the compressed audio

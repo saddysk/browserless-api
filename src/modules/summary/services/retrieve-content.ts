@@ -2,17 +2,17 @@ import axios from "axios";
 import { getTranscription } from "../../../utils/deepgram";
 import {
   processDownloading,
-  simulateProcessing,
+  simulateProcessingBuffer,
 } from "../../yt-downloader/services/process-download";
 import internal from "stream";
 import pdf from "pdf-parse";
 
-export async function getContentFromBase64(base64: string): Promise<string> {
-  const pdfBuffer = Buffer.from(base64, "base64");
-
+export async function getContentFromBase64(
+  pdfFile: Express.Multer.File
+): Promise<string> {
   try {
     // Load the PDF file
-    const data = await pdf(pdfBuffer);
+    const data = await pdf(pdfFile.buffer);
 
     // Extract and return the text content
     return data.text.replaceAll("\u0000", "");
@@ -54,9 +54,11 @@ export async function getContentFromYtUrl(url: string): Promise<string> {
 
   try {
     const audioStream = await processDownloading(url);
-    const audioUrl = await simulateProcessing(audioStream as internal.Readable);
+    const audioBuffer = await simulateProcessingBuffer(
+      audioStream as internal.Readable
+    );
 
-    const alternative = await getTranscription(audioUrl);
+    const alternative = await getTranscription(audioBuffer);
     return alternative.transcript;
   } catch {
     throw new Error(
@@ -65,20 +67,17 @@ export async function getContentFromYtUrl(url: string): Promise<string> {
   }
 }
 
-export async function getContentFromAudioUrl(url: string): Promise<string> {
-  const audioExtensions = [".mp3", ".wav"];
-
-  if (!audioExtensions.some((ext) => url.toLocaleLowerCase().endsWith(ext))) {
-    return "";
-  }
-
+export async function getContentFromAudioUrl(
+  audioFile: Express.Multer.File
+): Promise<string> {
   try {
-    const alternative = await getTranscription(url);
-    return alternative.transcript;
-  } catch {
-    throw new Error(
-      "Cannot read data. Please check if it is a valid youtube url."
+    const alternative = await getTranscription(
+      audioFile.buffer,
+      audioFile.mimetype
     );
+    return alternative.transcript;
+  } catch (error) {
+    throw error;
   }
 }
 

@@ -1,7 +1,8 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import { AppConfig } from "./src/interfaces/config/config";
+import bodyParser from "body-parser";
 
+import { AppConfig } from "./src/interfaces/config/config";
 import youtubeDownloaderRoute from "./src/modules/yt-downloader/youtube-downloader.route";
 import audioTrimmerRoute from "./src/modules/audio-trimmmer/audio-trimmmer.route";
 import bubbleRoute from "./src/modules/bubble/bubble.route";
@@ -12,9 +13,12 @@ const CONFIG = AppConfig();
 const app: Express = express();
 const PORT = CONFIG.PORT || 3010;
 
-app.use(express.json({ limit: "15mb" }));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
+// for parsing application/json
+app.use(bodyParser.json());
 
 app.use("/browserless/api/youtube-downloader", youtubeDownloaderRoute);
 app.use("/browserless/api/audio-trimmer", audioTrimmerRoute);
