@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 const OPENAI_API_URL = "https://api.openai.com/v1/embeddings";
 const OPENAI_API_KEY = process.env["AUDIONOTES_OPENAI_API_KEY"];
 const PINECONE_API_URL =
-  "https://audionotes-1hdd7nb.svc.gcp-starter.pinecone.io/vectors/upsert";
+  "https://podnotes-soyl752.svc.gcp-starter.pinecone.io/vectors/upsert";
 const PINECONE_API_KEY = process.env["AUDIONOTES_PINECONE_API_KEY"];
 
 export const pineconeService = async (req: Request): Promise<IResponse> => {
