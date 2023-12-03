@@ -67,7 +67,7 @@ export const pineconeService = async (req: Request): Promise<IResponse> => {
           }
         )
         .then(() => console.log(`Data stored for id: ${id}`))
-        .catch((error) => console.log(error));
+        .catch((error) => console.log(`${error} ---${id}`));
     }
     return {
       status: 200,
