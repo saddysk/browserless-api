@@ -2,7 +2,7 @@ import { Request } from "express";
 import { IResponse } from "../../../interfaces/response.interface";
 import axios from "axios";
 import { splitStringIntoChunks } from "./bubble-notion-call.service";
-import { uuid } from "uuidv4";
+import { v4 as uuidv4 } from "uuid";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/embeddings";
 const OPENAI_API_KEY = process.env["AUDIONOTES_OPENAI_API_KEY"];
@@ -30,7 +30,7 @@ export const pineconeService = async (req: Request): Promise<IResponse> => {
         }
       );
 
-      const uniqueId = uuid();
+      const uniqueId = uuidv4();
       await axios
         .post(
           PINECONE_API_URL,
