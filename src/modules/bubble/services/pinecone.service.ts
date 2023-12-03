@@ -30,7 +30,7 @@ export const pineconeService = async (req: Request): Promise<IResponse> => {
   try {
     const textChunks = splitStringIntoChunks(text, 1000);
 
-    for (const chunk of textChunks) {
+    textChunks.map(async (chunk) => {
       const openaiResponse = await axios.post(
         OPENAI_API_URL,
         {
@@ -73,7 +73,7 @@ export const pineconeService = async (req: Request): Promise<IResponse> => {
         .catch((error) =>
           console.log(`${error} ---note id ${id}, id: ${uniqueId}`)
         );
-    }
+    });
     return {
       status: 200,
       body: {
