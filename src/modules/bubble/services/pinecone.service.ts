@@ -14,7 +14,7 @@ export const pineconeService = async (req: Request): Promise<IResponse> => {
   const { id, text, namespace } = req.body;
 
   try {
-    const textChunks = splitStringIntoChunks(text, 1000);
+    const textChunks = splitStringIntoChunks(text);
 
     textChunks.map(async (chunk) => {
       const openaiResponse = await axios.post(
