@@ -2,27 +2,13 @@ import { Request } from "express";
 import { IResponse } from "../../../interfaces/response.interface";
 import axios from "axios";
 import { splitStringIntoChunks } from "./bubble-notion-call.service";
+import { uuid } from "uuidv4";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/embeddings";
 const OPENAI_API_KEY = process.env["AUDIONOTES_OPENAI_API_KEY"];
 const PINECONE_API_URL =
   "https://podnotes-soyl752.svc.gcp-starter.pinecone.io/vectors/upsert";
 const PINECONE_API_KEY = process.env["AUDIONOTES_PINECONE_API_KEY"];
-
-const generateUniqueId = (): string => {
-  const now = new Date();
-  const uniqueId = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(
-    2,
-    "0"
-  )}${String(now.getDate()).padStart(2, "0")}${String(now.getHours()).padStart(
-    2,
-    "0"
-  )}${String(now.getMinutes()).padStart(2, "0")}${String(
-    now.getSeconds()
-  ).padStart(2, "0")}`;
-
-  return uniqueId;
-};
 
 export const pineconeService = async (req: Request): Promise<IResponse> => {
   const { id, text, namespace } = req.body;
@@ -44,7 +30,7 @@ export const pineconeService = async (req: Request): Promise<IResponse> => {
         }
       );
 
-      const uniqueId = generateUniqueId();
+      const uniqueId = uuid();
       await axios
         .post(
           PINECONE_API_URL,
