@@ -59,6 +59,9 @@ export const pineconeService = async (req: Request): Promise<IResponse> => {
         .catch((error) =>
           console.log(`${error} ---note id ${id}, id: ${uniqueId}`)
         );
+
+      // Wait for 0.5 seconds
+      await new Promise((resolve) => setTimeout(resolve, 500));
     });
     return {
       status: 200,
