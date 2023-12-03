@@ -83,8 +83,10 @@ function formatAndGetNotionData(request: IRequest) {
   });
 }
 
-function splitStringIntoChunks(inputString: string): string[] {
-  const chunkSize = 1500;
+export function splitStringIntoChunks(
+  inputString: string,
+  chunkSize = 1500
+): string[] {
   const chunks: string[] = [];
   let startIndex = 0;
 
