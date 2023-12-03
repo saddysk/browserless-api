@@ -44,13 +44,14 @@ export const pineconeService = async (req: Request): Promise<IResponse> => {
         }
       );
 
+      const uniqueId = generateUniqueId();
       await axios
         .post(
           PINECONE_API_URL,
           {
             vectors: [
               {
-                id: generateUniqueId(),
+                id: uniqueId,
                 metadata: {
                   text: chunk,
                   note: id,
@@ -66,8 +67,12 @@ export const pineconeService = async (req: Request): Promise<IResponse> => {
             },
           }
         )
-        .then(() => console.log(`Data stored for id: ${id}`))
-        .catch((error) => console.log(`${error} ---${id}`));
+        .then(() =>
+          console.log(`Data stored for note id: ${id}, id: ${uniqueId}`)
+        )
+        .catch((error) =>
+          console.log(`${error} ---note id ${id}, id: ${uniqueId}`)
+        );
     }
     return {
       status: 200,
