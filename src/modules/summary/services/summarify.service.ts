@@ -29,7 +29,7 @@ export const generateSummaryService = async (
   } = req.body;
 
   try {
-    const summaryPrompt = createPrompt(outputLanguage!, writingStyle!, style);
+    const summaryPrompt = createPrompt(outputLanguage!, style, writingStyle);
     const headlinePrompt = createHeadlinePrompt(outputLanguage!);
 
     generateSummary({

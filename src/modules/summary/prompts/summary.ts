@@ -1,16 +1,11 @@
-import { styles } from "./helpers/styles";
-import { writingStyles } from "./helpers/writing-styles";
-
 const createPrompt = (
   outputLanguage: string,
-  writingStyle: keyof typeof writingStyles,
-  style: keyof typeof styles
+  style: string,
+  writingStyle?: string
 ): string => {
   return (
-    `You are a writer. The tone in which you write is ${style}, ${styles[style]}` +
-    (writingStyle !== "None"
-      ? `And your writing style is like ${writingStyle}, who is ${writingStyles[writingStyle]}.`
-      : "") +
+    `You are a writer. The tone in which you write is ${style}` +
+    (writingStyle ? `And your writing style is ${writingStyle}` : "") +
     `Okay, now that you know your writing style, here are further instructions: I will present you with a chunk of text. I want you to summarize it in the writing style I mentioned earlier. Feel free to restructure and reorder the flow of the text if it helps increase the clarity of the content. Also, remember to add paragraph breaks and punctuation where appropriate.
     
     Remember these very important points:
