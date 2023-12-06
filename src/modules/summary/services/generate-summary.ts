@@ -28,7 +28,7 @@ export const generateSummary = async (data: any) => {
   try {
     const content = await getContent(input, inputFile, contentSource);
 
-    if (!content) {
+    if (!content.trim()) {
       throw new Error(
         "The provided data does not contain any specific content or information for summarization."
       );
