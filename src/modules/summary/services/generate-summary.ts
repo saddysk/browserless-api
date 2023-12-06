@@ -27,6 +27,13 @@ export const generateSummary = async (data: any) => {
 
   try {
     const content = await getContent(input, inputFile, contentSource);
+
+    if (!content) {
+      throw new Error(
+        "The provided data does not contain any specific content or information for summarization."
+      );
+    }
+
     const tokenVerifiedContent = splitContentToTokenLimit(content);
 
     console.debug(`[Debug] summarizing for summary id: ${summaryId}`);
