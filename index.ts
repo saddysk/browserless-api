@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 app.use("/api/youtube-downloader", youtubeDownloaderRoute);
 app.use("/api/audio-trimmer", audioTrimmerRoute);
-app.use("/api/audioNotes", audioNotes);
+app.use("/api/audio-notes", audioNotes);
 app.use("/api/summary", summaryRoute);
 
 app.get("/api", (req: Request, res: Response) => {
