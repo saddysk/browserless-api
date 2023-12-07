@@ -87,8 +87,13 @@ async function simulateSummaryProcessing(
             createCompletion(summaryPrompt, article, summaryId)
           )
         );
-        const finalSummary = summary.join("/n").replace(/^\n+/, "");
+        const finalSummary = summary.join("/n").replace(/^\n+/, "").trim();
         console.log(`Summary generated for id: ${summaryId}`);
+
+        if (!finalSummary) {
+          throw new Error("Couldn't get any summary from OpenAI.");
+        }
+
         const headline = await createCompletion(headlinePrompt, finalSummary);
         console.log(`Headline generated for id: ${summaryId}`);
 
