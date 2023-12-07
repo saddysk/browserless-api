@@ -12,9 +12,7 @@ interface IRequest {
   shownotes?: string;
 }
 
-export const bubbleNotionCallService = async (
-  req: Request
-): Promise<IResponse> => {
+export const notionService = async (req: Request): Promise<IResponse> => {
   const { authorization, ...requestData } = req.body;
 
   const notionData = formatAndGetNotionData(requestData);

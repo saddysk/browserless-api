@@ -11,7 +11,7 @@ interface IRequest {
   posts: IPost[];
 }
 
-export const bubbleJsonService = async (req: Request): Promise<IResponse> => {
+export const jsonService = async (req: Request): Promise<IResponse> => {
   const data = req.body;
 
   return {

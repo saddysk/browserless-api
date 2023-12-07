@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { IResponse } from "../../../interfaces/response.interface";
 import axios from "axios";
-import { splitStringIntoChunks } from "./bubble-notion-call.service";
+import { splitStringIntoChunks } from "./notion.service";
 import { v4 as uuidv4 } from "uuid";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/embeddings";

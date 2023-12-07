@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import { AppConfig } from "./src/interfaces/config/config";
 import youtubeDownloaderRoute from "./src/modules/yt-downloader/youtube-downloader.route";
 import audioTrimmerRoute from "./src/modules/audio-trimmmer/audio-trimmmer.route";
-import bubbleRoute from "./src/modules/bubble/bubble.route";
+import audioNotes from "./src/modules/audio-notes/audio-notes";
 import summaryRoute from "./src/modules/summary/summary.route";
 
 const CONFIG = AppConfig();
@@ -20,12 +20,12 @@ app.use(cors());
 // for parsing application/json
 app.use(bodyParser.json());
 
-app.use("/browserless/api/youtube-downloader", youtubeDownloaderRoute);
-app.use("/browserless/api/audio-trimmer", audioTrimmerRoute);
-app.use("/browserless/api/bubble-notion", bubbleRoute);
-app.use("/browserless/api/summary", summaryRoute);
+app.use("/api/youtube-downloader", youtubeDownloaderRoute);
+app.use("/api/audio-trimmer", audioTrimmerRoute);
+app.use("/api/audioNotes", audioNotes);
+app.use("/api/summary", summaryRoute);
 
-app.get("/browserless/api", (req: Request, res: Response) => {
+app.get("/api", (req: Request, res: Response) => {
   res.send("Api Working!");
 });
 
