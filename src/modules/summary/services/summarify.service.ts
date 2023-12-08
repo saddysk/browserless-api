@@ -3,6 +3,8 @@ import { IResponse } from "../../../interfaces/response.interface";
 import createPrompt from "../prompts/summary";
 import createHeadlinePrompt from "../prompts/headline";
 import { generateSummary } from "./generate-summary";
+import { ContentSource } from "../summarify.enum";
+import { getContentFromBase64 } from "./retrieve-content";
 
 const errorResponseObject = (status: number, message: string): IResponse => {
   return {
@@ -42,10 +44,16 @@ export const generateSummaryService = async (
       callbackUrl,
     });
 
+    let pdfInput;
+    if (contentSource === ContentSource.Pdf) {
+      pdfInput = await getContentFromBase64(inputFile!);
+    }
+
     return {
       status: 200,
       body: {
         message: `Starting summary generation for ${summaryId}`,
+        data: pdfInput,
       },
     };
   } catch (error: any) {
