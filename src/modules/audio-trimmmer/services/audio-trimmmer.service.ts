@@ -4,9 +4,16 @@ import { uploadToAwsS3 } from "../../storage/services/storage.service";
 import ffmpeg from "fluent-ffmpeg";
 import { PassThrough } from "stream";
 import { Request } from "express";
+import { URL } from "url";
+import path from "path";
 
 export const audioTrimmerService = async (req: Request): Promise<IResponse> => {
   const { audioUrl, startTimeInMs, endTimeInMs, fileName } = req.body;
+
+  // get extension
+  const url = new URL(audioUrl);
+  const pathname = url.pathname;
+  const extension = path.extname(pathname).slice(1);
 
   if (!["http://", "https://"].some((str) => audioUrl.includes(str))) {
     return {
@@ -39,7 +46,7 @@ export const audioTrimmerService = async (req: Request): Promise<IResponse> => {
     // Pipe the response data from Axios to ffmpeg
     const command = ffmpeg()
       .input(response.data)
-      .inputFormat("mp3")
+      .inputFormat(extension)
       .seekInput(startTimeInMs / 1000)
       .duration((endTimeInMs - startTimeInMs) / 1000)
       .audioCodec("libmp3lame")
