@@ -29,9 +29,7 @@ export const generateSummary = async (data: any) => {
     const content = await getContent(input, inputFile, contentSource);
 
     if (!content.trim()) {
-      throw new Error(
-        "The provided data does not contain any specific content or information for summarization."
-      );
+      throw new Error("Can not read any data from the provided input source");
     }
 
     const tokenVerifiedContent = splitContentToTokenLimit(content);
@@ -84,7 +82,7 @@ async function simulateSummaryProcessing(
         console.log(`Processing for summary id: ${summaryId}`);
         const summary = await Promise.all(
           tokenVerifiedContent.map((article) =>
-            createCompletion(summaryPrompt, article, summaryId)
+            createCompletion(summaryPrompt, article)
           )
         );
         const finalSummary = summary.join("/n").replace(/^\n+/, "").trim();
