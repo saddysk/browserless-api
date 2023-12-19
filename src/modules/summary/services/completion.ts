@@ -53,8 +53,8 @@ export async function createCompletion(
     );
 
     return response.choices[0].message?.content!;
-  } catch (error) {
+  } catch (error: any) {
     console.error(error, "api/summary error");
-    throw new Error(`[Error] 500: Failed to get summary`);
+    throw new Error(error.message);
   }
 }
