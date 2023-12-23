@@ -1,4 +1,3 @@
-import { createCompletion } from "./completion";
 import axios from "axios";
 import { splitContentToTokenLimit } from "./split-within-token-limit";
 import { ContentSource } from "../summarify.enum";
@@ -8,6 +7,7 @@ import {
   getContentFromWebUrl,
   getContentFromYtUrl,
 } from "./retrieve-content";
+import { createCompletion } from "../../openai/completion";
 
 interface ISummaryCallbackResponse {
   headline: string;

@@ -1,6 +1,6 @@
-import azureOpenAi from "../../../config/azure-openai.config";
+import azureOpenAi from "../../config/azure-openai.config";
 import { ChatMessage, GetChatCompletionsOptions } from "@azure/openai";
-import openai from "../../../config/openai.config";
+import openai from "../../config/openai.config";
 import {
   ChatCompletionCreateParamsNonStreaming,
   ChatCompletionMessageParam,
@@ -11,9 +11,8 @@ export const MaxtTokens = 1000 * 4;
 export async function createCompletion(
   prompt: string,
   article: string,
-  summaryId?: string
 ): Promise<string> {
-  const messages: ChatCompletionMessageParam[] = [
+  const messages: ChatMessage[] = [
     {
       role: "system",
       content: prompt,
@@ -32,10 +31,6 @@ export async function createCompletion(
     //   max_tokens: MaxtTokens,
     //   temperature: 0.8,
     // };
-
-    // if (summaryId) {
-    //   console.log(`processing > ${summaryId}`);
-    // }
 
     // const response = await openai.chat.completions.create(params);
 

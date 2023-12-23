@@ -42,7 +42,7 @@ export const generateSummaryService = async (
       headlinePrompt,
       summaryId,
       callbackUrl,
-    });
+    }).then();
 
     let pdfInput;
     if (contentSource === ContentSource.Pdf) {
