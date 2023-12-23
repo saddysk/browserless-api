@@ -1,7 +1,5 @@
 import { Request } from "express";
 import { IResponse } from "../../../interfaces/response.interface";
-import createPrompt from "../prompts/summary";
-import createHeadlinePrompt from "../prompts/headline";
 import { generateSummary } from "./generate-summary";
 import { ContentSource } from "../summarify.enum";
 import { getContentFromBase64 } from "./retrieve-content";
@@ -31,15 +29,13 @@ export const generateSummaryService = async (
   } = req.body;
 
   try {
-    const summaryPrompt = createPrompt(outputLanguage!, style, writingStyle);
-    const headlinePrompt = createHeadlinePrompt(outputLanguage!);
-
     generateSummary({
       input,
       inputFile,
       contentSource,
-      summaryPrompt,
-      headlinePrompt,
+      outputLanguage,
+      writingStyle,
+      style,
       summaryId,
       callbackUrl,
     }).then();

@@ -1,6 +1,6 @@
-import { createCompletion } from "./completion";
+import { createCompletion } from "../../openai/completion";
 import axios from "axios";
-import { splitContentToTokenLimit } from "./split-within-token-limit";
+import { validateTokenLimit } from "./split-within-token-limit";
 import { ContentSource } from "../summarify.enum";
 import {
   getContentFromAudioUrl,
@@ -8,6 +8,10 @@ import {
   getContentFromWebUrl,
   getContentFromYtUrl,
 } from "./retrieve-content";
+import { assistantRetrieval } from "../../openai/retrieval";
+import createPrompt from "../prompts/summary";
+import createHeadlinePrompt from "../prompts/headline";
+import retrievalUserPrompt from "../prompts/retrieval-user";
 
 interface ISummaryCallbackResponse {
   headline: string;
@@ -19,8 +23,9 @@ export const generateSummary = async (data: any) => {
     input,
     inputFile,
     contentSource,
-    summaryPrompt,
-    headlinePrompt,
+    outputLanguage,
+    writingStyle,
+    style,
     summaryId,
     callbackUrl,
   } = data;
@@ -32,15 +37,20 @@ export const generateSummary = async (data: any) => {
       throw new Error("Can not read any data from the provided input source");
     }
 
-    const tokenVerifiedContent = splitContentToTokenLimit(content);
-
     console.debug(`[Debug] summarizing for summary id: ${summaryId}`);
 
+    const isWithinTokenLimit = validateTokenLimit(content);
+
+    const summaryPrompt = isWithinTokenLimit
+      ? createPrompt(outputLanguage, style, writingStyle)
+      : retrievalUserPrompt(outputLanguage, style, writingStyle);
+    const headlinePrompt = createHeadlinePrompt(outputLanguage!);
     const { headline, summary } = await simulateSummaryProcessing(
       summaryId,
-      tokenVerifiedContent,
+      content,
       summaryPrompt,
-      headlinePrompt
+      headlinePrompt,
+      isWithinTokenLimit
     );
 
     // Send the result to the callback URL
@@ -72,26 +82,30 @@ export const generateSummary = async (data: any) => {
 // Simulate a time-consuming process
 async function simulateSummaryProcessing(
   summaryId: string,
-  tokenVerifiedContent: string[],
+  content: string,
   summaryPrompt: string,
-  headlinePrompt: string
+  headlinePrompt: string,
+  isWithinTokenLimit: boolean
 ): Promise<ISummaryCallbackResponse> {
   const response = await new Promise<ISummaryCallbackResponse>(
     async (resolve, reject) => {
       try {
         console.log(`Processing for summary id: ${summaryId}`);
-        const summary = await Promise.all(
-          tokenVerifiedContent.map((article) =>
-            createCompletion(summaryPrompt, article)
-          )
-        );
-        const finalSummary = summary.join("/n").replace(/^\n+/, "").trim();
-        console.log(`Summary generated for id: ${summaryId}`);
 
-        if (!finalSummary) {
+        console.log("single token limit? ", isWithinTokenLimit);
+        let summary = null;
+        if (isWithinTokenLimit) {
+          summary = await createCompletion(summaryPrompt, content);
+        } else {
+          summary = await assistantRetrieval(content, summaryPrompt);
+        }
+
+        if (!summary) {
           throw new Error("Couldn't get any summary from OpenAI.");
         }
 
+        const finalSummary = summary.replace(/^\n+/, "").trim();
+        console.log(`Summary generated for id: ${summaryId}`);
         const headline = await createCompletion(headlinePrompt, finalSummary);
         console.log(`Headline generated for id: ${summaryId}`);
 

@@ -26,7 +26,7 @@ export async function createCompletion(
   try {
     // OPENAI
     // const params: ChatCompletionCreateParamsNonStreaming = {
-    //   model: process.env.OPENAI_MODEL!,
+    //   model: process.env['OPENAI_MODEL'],
     //   messages, // type should be "ChatCompletionMessageParam[]"
     //   max_tokens: MaxtTokens,
     //   temperature: 0.8,
@@ -37,7 +37,7 @@ export async function createCompletion(
     // AZURE
     const params: GetChatCompletionsOptions = {
       maxTokens: MaxtTokens,
-      model: process.env.AZURE_OPENAI_MODEL,
+      model: process.env['AZURE_OPENAI_MODEL'],
       temperature: 0.8,
     };
 

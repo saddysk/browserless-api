@@ -6,9 +6,21 @@ export const ModelTokenLimit = 16000;
 const PromptTokenCount = 500;
 const defaultTokenCount = MaxtTokens + PromptTokenCount;
 
+export function validateTokenLimit(content: string): boolean {
+  const encoder = encodingForModel(ModelTokenCount);
+  const encoded = encoder.encode(content);
+
+  const totalTokenCount = encoded.length + defaultTokenCount;
+
+  if (totalTokenCount > ModelTokenLimit) {
+    return false;
+  }
+
+  return true;
+}
+
 export function splitContentToTokenLimit(content: string): string[] {
   const encoder = encodingForModel(ModelTokenCount);
-
   const encoded = encoder.encode(content);
 
   const totalTokenCount = encoded.length + defaultTokenCount;
