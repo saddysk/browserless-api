@@ -1,7 +1,7 @@
 import { ManagedUpload } from "aws-sdk/clients/s3";
-import s3 from "../../../interfaces/config/aws.config";
-import { AppConfig } from "../../../interfaces/config/config";
-import supabase from "../../../interfaces/config/supabase.config";
+import s3 from "../../../config/aws.config";
+import { AppConfig } from "../../../config/config";
+import supabase from "../../../config/supabase.config";
 
 const CONFIG = AppConfig();
 
