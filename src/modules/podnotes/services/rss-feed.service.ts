@@ -11,7 +11,7 @@ export const rssFeedService = async (req: Request): Promise<IResponse> => {
   const { data: rssFeed } = await axios.get(url);
 
   const podcasts: any = [];
-  let channelTitle;
+  let channelTitle, thumbnail;
   parser.parseString(rssFeed, (err, result) => {
     if (err) {
       console.error("Error parsing XML:", err);
@@ -19,10 +19,15 @@ export const rssFeedService = async (req: Request): Promise<IResponse> => {
     }
 
     try {
+      console.log(result.rss.channel[0]);
+
       const channel = result.rss.channel[0];
+
       channelTitle = channel.title[0];
+      thumbnail = channel.image[0].url[0];
 
       channel.item.forEach((podcast: any) => {
+        // console.log(podcast, "\n-------------\n");
         podcasts.push({
           title: podcast.title[0],
           podcastUrl: podcast.enclosure[0].$.url,
@@ -40,7 +45,10 @@ export const rssFeedService = async (req: Request): Promise<IResponse> => {
   return {
     status: 200,
     body: {
-      data: { channelTitle, podcasts: [...podcasts] },
+      data: { channelTitle, thumbnail, podcasts: [...podcasts] },
     },
   };
 };
+
+// "url": "https://feeds.libsyn.com/494933/rss",
+// "url": "https://feeds.megaphone.fm/HS2300184645",
