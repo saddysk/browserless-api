@@ -11,7 +11,7 @@ export const rssFeedService = async (req: Request): Promise<IResponse> => {
   const { data: rssFeed } = await axios.get(url);
 
   const podcasts: any = [];
-  let channelTitle, thumbnail;
+  let channelTitle;
   parser.parseString(rssFeed, (err, result) => {
     if (err) {
       console.error("Error parsing XML:", err);
@@ -19,21 +19,20 @@ export const rssFeedService = async (req: Request): Promise<IResponse> => {
     }
 
     try {
-      console.log(result.rss.channel[0]);
+      // console.log(result.rss.channel[0]);
 
       const channel = result.rss.channel[0];
 
       channelTitle = channel.title[0];
-      thumbnail = channel.image[0].url[0];
-
       channel.item.forEach((podcast: any) => {
         // console.log(podcast, "\n-------------\n");
         podcasts.push({
           title: podcast.title[0],
           podcastUrl: podcast.enclosure[0].$.url,
-          pudlishDate: podcast.pubDate[0],
-          duration: podcast["itunes:duration"][0],
-          episode: podcast["itunes:episode"][0],
+          pudlishDate: podcast.pubDate?.[0],
+          duration: podcast["itunes:duration"]?.[0],
+          episode: podcast["itunes:episode"]?.[0],
+          thumbnail: podcast["itunes:image"]?.[0].$.href,
         });
       });
     } catch (error) {
@@ -45,7 +44,7 @@ export const rssFeedService = async (req: Request): Promise<IResponse> => {
   return {
     status: 200,
     body: {
-      data: { channelTitle, thumbnail, podcasts: [...podcasts] },
+      data: { channelTitle, podcasts: [...podcasts] },
     },
   };
 };
