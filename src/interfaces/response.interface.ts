@@ -3,6 +3,7 @@ export interface IResponse {
   body: {
     message?: string;
     data?: object | string;
+    srt?: any;
     error?: object | string;
   };
 }
