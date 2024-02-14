@@ -1,6 +1,8 @@
 export interface IResponse {
   status: number;
-  body: {
+  data?: any;
+  error?: any;
+  body?: {
     message?: string;
     data?: object | string;
     srt?: any;
