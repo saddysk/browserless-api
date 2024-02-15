@@ -56,7 +56,7 @@ const downloadYoutubeVideoService = async (
     console.error(`[Error] ${error}`);
     return {
       status: 500,
-      error: `Error during audio download and processing. ${error}`,
+      error: `Error while downloading the file. ${error}`,
     };
   }
 };
